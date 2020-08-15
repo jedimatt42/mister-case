@@ -117,6 +117,68 @@ module usb_jack() {
     }
 }
 
+module fan_screw() {
+    cylinder(h=10,r=1.2,center=false);
+    
+    translate([0,0,5])
+    cylinder(h=3,r=2.1,center=false);
+}
+
+module fan() {
+    cube([8,30,30]);
+
+    translate([3,30-3,30-3])
+    rotate([0,-90,0])
+    fan_screw();
+    
+    translate([3,30-3,3])
+    rotate([0,-90,0])
+    fan_screw();
+    
+    translate([3,3,30-3])
+    rotate([0,-90,0])
+    fan_screw();
+    
+    translate([3,3,3])
+    rotate([0,-90,0])
+    fan_screw();
+}
+
+module side_vent() {
+    // horizontal slats - partial depth
+    for(x=[0:3:30])
+    translate([1,0,x])
+    cube([2,50,1.5]);
+    
+    // vertical cut in from outside
+    for(x=[0:10:40])
+    translate([0,x,0])
+    cube([1,8,33]);
+}
+    
+module fan_mount() {
+    difference() {
+        side_vent();
+        
+        // leave behind mounting support
+        translate([3,13,3])
+        rotate([0,-90,0])
+        cylinder(h=2,r=3.1,center=false);
+
+        translate([3,13+24,3])
+        rotate([0,-90,0])
+        cylinder(h=2,r=3.1,center=false);
+        
+        translate([3,13,3+24])
+        rotate([0,-90,0])
+        cylinder(h=2,r=3.1,center=false);
+        
+        translate([3,13+24,3+24])
+        rotate([0,-90,0])
+        cylinder(h=2,r=3.1,center=false);
+    }
+}
+
 module junk_in_the_box() {
     translate([6,sh_y-18,sh_z-psw_z-6])
     switch();
@@ -138,6 +200,16 @@ module junk_in_the_box() {
     
     translate([sh_x-90,sh_y-20,8])
     etherjack();
+    
+    translate([0,30,5])
+    fan();
+    
+    translate([-3,20,5])
+    fan_mount();
+    
+    translate([sh_x+3,20,5])
+    scale([-1,1,1])
+    side_vent();
 }
 
 module mister_standoff() {
@@ -213,8 +285,47 @@ module shell_back() {
             translate([2,sh_y-th-2,th])
             cube([20,2,20]);
             
+            // guide edge for bottom
             translate([0,sh_y-th-2,th])
             cube([sh_x,2,2]);
+        }
+    
+        junk_in_the_box();
+    }
+}
+
+module shell_left() {
+    th=3;
+    thx2=th*2;
+    
+    difference() {
+        union() {
+            difference() {
+                translate([-th,0,0])
+                cube([th,sh_y,sh_z]);
+                
+                cube([sh_x,sh_y,sh_z]);
+            }
+            
+        }
+    
+        junk_in_the_box();
+    }
+}
+
+module shell_right() {
+    th=3;
+    thx2=th*2;
+    
+    difference() {
+        union() {
+            difference() {
+                translate([sh_x,0,0])
+                cube([th,sh_y,sh_z]);
+                
+                cube([sh_x,sh_y,sh_z]);
+            }
+            
         }
     
         junk_in_the_box();
@@ -227,5 +338,15 @@ translate([0,sh_y+10,0])
 rotate([-90,0,0])
 translate([0,-sh_y,0])
 shell_back();
+
+translate([-10,0,0])
+rotate([0,-90,0])
+translate([3,0,0])
+shell_left();
+
+translate([sh_x+10,0,0])
+rotate([0,90,0])
+translate([-sh_x-3,0,0])
+shell_right();
 
 //junk_in_the_box();
