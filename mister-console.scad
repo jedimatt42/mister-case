@@ -180,22 +180,22 @@ module fan_mount() {
 }
 
 module junk_in_the_box() {
-    translate([6,sh_y-18,sh_z-psw_z-6])
+    translate([12,sh_y-18,sh_z-psw_z-6])
     switch();
     
-    translate([12,sh_y-14,12])
+    translate([18,sh_y-14,12])
     powerjack();
     
-    translate([30,sh_y-20,12])
+    translate([36,sh_y-20,12])
     hdmi_jack();
     
-    translate([sh_x-40,sh_y-20,8+24])
+    translate([sh_x-50,sh_y-20,8+24])
     usb_jack();
     
-    translate([sh_x-40,sh_y-20,8+12])
+    translate([sh_x-50,sh_y-20,8+12])
     usb_jack();
     
-    translate([sh_x-40,sh_y-20,8])
+    translate([sh_x-50,sh_y-20,8])
     usb_jack();
     
     translate([sh_x-90,sh_y-20,8])
@@ -282,7 +282,7 @@ module shell_back() {
             }
             
             // re-enforcement plate for power jack
-            translate([2,sh_y-th-2,th])
+            translate([8,sh_y-th-2,th])
             cube([20,2,20]);
             
             // guide edge for bottom
