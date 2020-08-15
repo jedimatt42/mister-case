@@ -5,7 +5,7 @@ psw_y=20;
 psw_z=20;
 
 // outer box dimensions
-sh_x=180;
+sh_x=200;
 sh_y=150;
 sh_z=50;
 
@@ -127,6 +127,9 @@ module junk_in_the_box() {
     translate([30,sh_y-20,12])
     hdmi_jack();
     
+    translate([sh_x-40,sh_y-20,8+24])
+    usb_jack();
+    
     translate([sh_x-40,sh_y-20,8+12])
     usb_jack();
     
@@ -160,6 +163,14 @@ module mister_standoffs() {
     mister_standoff();
 }
 
+module bottom_vent(x) {
+    translate([x,20,0])
+    cube([3,45,3]);
+
+    translate([x,85,0])
+    cube([3,45,3]);
+}
+
 module shell_bottom() {
     th=3;
     thx2=th*2;
@@ -167,15 +178,15 @@ module shell_bottom() {
     difference() {
         union() {
             difference() {
-                cube([sh_x,sh_y,sh_z]);
-                
-                translate([0,th,th])
+                translate([0,th,0])
                 cube([sh_x,sh_y-thx2,sh_z]);
+                
+                translate([0,0,th])
+                cube([sh_x,sh_y,sh_z]);
+
+                for(x=[20:10:180])
+                bottom_vent(x);
             }
-            
-            // re-enforcement plate for power jack
-            translate([2,sh_y-(th+2),2])
-            cube([20,2,20]);
             
             translate([40,20,0])
             mister_standoffs();
@@ -185,7 +196,36 @@ module shell_bottom() {
     }
 }
 
+module shell_back() {
+    th=3;
+    thx2=th*2;
+    
+    difference() {
+        union() {
+            difference() {
+                cube([sh_x,sh_y,sh_z]);
+                
+                translate([0,0,0])
+                cube([sh_x,sh_y-th,sh_z]);
+            }
+            
+            // re-enforcement plate for power jack
+            translate([2,sh_y-th-2,th])
+            cube([20,2,20]);
+            
+            translate([0,sh_y-th-2,th])
+            cube([sh_x,2,2]);
+        }
+    
+        junk_in_the_box();
+    }
+}
 
 shell_bottom();
+
+translate([0,sh_y+10,0])
+rotate([-90,0,0])
+translate([0,-sh_y,0])
+shell_back();
 
 //junk_in_the_box();
