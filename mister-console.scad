@@ -13,6 +13,9 @@ sh_z=50;
 mister_depth=62;
 mister_width=100;
 
+hub_width=23;
+hub_depth=58;
+
 // rotational segment count
 $fn=24;
 
@@ -235,6 +238,29 @@ module mister_standoffs() {
     mister_standoff();
 }
 
+module hub_standoff() {
+    difference() {
+        translate([-3,-3,0])
+        cube([6,6,6]);
+        
+        translate([0,0,2])
+        cylinder(h=4,r=1.5,center=false);        
+    }
+}
+
+module hub_standoffs() {
+    hub_standoff();
+
+    translate([hub_width,0,0])
+    hub_standoff();
+    
+    translate([0,hub_depth,0])
+    hub_standoff();
+    
+    translate([hub_width,hub_depth,0])
+    hub_standoff();
+}
+
 module bottom_vent(x) {
     translate([x,20,0])
     cube([3,45,3]);
@@ -262,6 +288,9 @@ module shell_bottom() {
             
             translate([40,20,0])
             mister_standoffs();
+            
+            translate([sh_x-35,40,0])
+            hub_standoffs();
         }
     
         junk_in_the_box();
