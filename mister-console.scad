@@ -1,13 +1,13 @@
 
+// outer box dimensions
+sh_x=200;
+sh_y=180;
+sh_z=50;
+
 // power switch dimensions
 psw_x=13;
 psw_y=20;
 psw_z=20;
-
-// outer box dimensions
-sh_x=200;
-sh_y=150;
-sh_z=50;
 
 // standoff details
 mister_depth=62;
@@ -15,6 +15,9 @@ mister_width=100;
 
 hub_width=23;
 hub_depth=58;
+
+// brass threaded inset
+thread_inset=1.55;
 
 // rotational segment count
 $fn=24;
@@ -182,6 +185,10 @@ module fan_mount() {
     }
 }
 
+module screw_hole() {
+    cylinder(h=20,r=thread_inset,center=false);
+}
+
 module junk_in_the_box() {
     translate([12,sh_y-18,sh_z-psw_z-6])
     switch();
@@ -189,7 +196,7 @@ module junk_in_the_box() {
     translate([18,sh_y-14,12])
     powerjack();
     
-    translate([36,sh_y-20,12])
+    translate([36,sh_y-20,22])
     hdmi_jack();
     
     translate([sh_x-50,sh_y-20,8+24])
@@ -198,30 +205,57 @@ module junk_in_the_box() {
     translate([sh_x-50,sh_y-20,8+12])
     usb_jack();
     
-    translate([sh_x-50,sh_y-20,8])
-    usb_jack();
+    //translate([sh_x-50,sh_y-20,8])
+    //usb_jack();
     
-    translate([sh_x-90,sh_y-20,8])
+    translate([sh_x-90,sh_y-20,18])
     etherjack();
     
-    translate([0,30,5])
+    translate([0,50,5])
     fan();
     
-    translate([-3,20,5])
+    translate([-3,40,5])
     fan_mount();
     
-    translate([sh_x+3,20,5])
+    translate([sh_x+3,40,5])
     scale([-1,1,1])
     side_vent();
+    
+    // bottom assembly screw holes
+    translate([6,20,-5])
+    screw_hole();
+    translate([6,sh_y-20,-5])
+    screw_hole();
+    translate([sh_x-6,20,-5])
+    screw_hole();
+    translate([sh_x-6,sh_y-20,-5])
+    screw_hole();
+    
+    // rear assembly screw holes
+    translate([6,sh_y-15,sh_z-20])
+    rotate([-90,0,0])
+    screw_hole();    
+    translate([sh_x-6,sh_y-15,sh_z-20])
+    rotate([-90,0,0])
+    screw_hole();
+    translate([100,sh_y-15,sh_z-6])
+    rotate([-90,0,0])
+    screw_hole();
+    
+    // front to bottom screw holes
+    translate([40,9,-5])
+    screw_hole();
+    translate([sh_x-40,9,-5])
+    screw_hole();
 }
 
 module mister_standoff() {
     difference() {
         translate([-5,-5,0])
-        cube([10,10,9]);
+        cube([10,10,14]);
         
         translate([0,0,2])
-        cylinder(h=7,r=2.3,center=false);
+        cylinder(h=12,r=thread_inset,center=false);
     }
 }
 
@@ -241,25 +275,43 @@ module mister_standoffs() {
 module hub_standoff() {
     difference() {
         translate([-3,-3,0])
-        cube([6,6,6]);
+        cube([6,6,8]);
         
         translate([0,0,2])
-        cylinder(h=4,r=1.5,center=false);        
+        cylinder(h=6,r=thread_inset,center=false);        
     }
 }
 
-module hub_standoffs() {
+module gen_standoffs(width, depth) {
     hub_standoff();
 
-    translate([hub_width,0,0])
+    translate([width,0,0])
     hub_standoff();
     
-    translate([0,hub_depth,0])
+    translate([0,depth,0])
     hub_standoff();
     
-    translate([hub_width,hub_depth,0])
+    translate([width,depth,0])
     hub_standoff();
 }
+
+module hub_standoffs() {
+    gen_standoffs(hub_width, hub_depth);
+}
+
+module mjdc_standoffs() {
+    gen_standoffs(25, 20);
+    
+    translate([7.5,0,0])
+    cube([10,20,6]);
+    
+    translate([1.5,-3,0])
+    cube([22,6,6]);
+    
+    translate([1.5,17,0])
+    cube([22,6,6]);
+}
+
 
 module bottom_vent(x) {
     translate([x,20,0])
@@ -267,6 +319,13 @@ module bottom_vent(x) {
 
     translate([x,85,0])
     cube([3,45,3]);
+}
+
+module stress_cutouts(limit) {
+    for(x=[20:40:limit])
+    translate([x,0,0])
+    scale([1,2,1])
+    cylinder(h=10,r=1.3,center=false);  
 }
 
 module shell_bottom() {
@@ -282,19 +341,60 @@ module shell_bottom() {
                 translate([0,0,th])
                 cube([sh_x,sh_y,sh_z]);
 
-                for(x=[20:10:180])
+                for(x=[20:10:sh_x-20])
                 bottom_vent(x);
             }
             
-            translate([40,20,0])
+            translate([50,50,0])
             mister_standoffs();
             
-            translate([sh_x-35,40,0])
+            translate([70,160,0])
+            rotate([0,0,-90])
             hub_standoffs();
+            
+            translate([70,7,0])
+            mjdc_standoffs();
+            
+            translate([sh_x-70-25,7,0])
+            mjdc_standoffs();
         }
     
         junk_in_the_box();
+        
+        // stress relief
+        translate([0,3,-4])
+        stress_cutouts(sh_x-10);
+    
+        translate([0,sh_y-3,-4])
+        stress_cutouts(sh_x-10);
+        
+        translate([0,10,-4])
+        rotate([0,0,90])
+        stress_cutouts(sh_y-10);
+        
+        translate([200,10,-4])
+        rotate([0,0,90])
+        stress_cutouts(sh_y-10);
+        
+        for(x=[15:60:sh_x-18])
+        translate([x,73.5,0])
+        cube([50,3,3]); 
+        
+        for(x=[15:60:sh_x-18])
+        translate([x,150.5,0])
+        cube([50,3,3]); 
     }
+}
+
+
+module bracket() {
+    translate([0,-3,0])
+    cube([10,6,10]);
+}
+
+module rear_bracket() {
+    translate([0,0,-3])
+    cube([10,10,6]);
 }
 
 module shell_back() {
@@ -320,6 +420,15 @@ module shell_back() {
         }
     
         junk_in_the_box();
+        
+        // stress relief
+        translate([0,sh_y-3,0])
+        rotate([-90,0,0])
+        stress_cutouts(sh_x-10);
+
+        translate([0,sh_y-3,sh_z])
+        rotate([-90,0,0])
+        stress_cutouts(sh_x-10);
     }
 }
 
@@ -335,10 +444,32 @@ module shell_left() {
                 
                 cube([sh_x,sh_y,sh_z]);
             }
+
+            // guide edge for bottom
+            translate([0,th+2,th])
+            cube([2,sh_y-4-thx2,2]); 
+ 
+            // brackets
+            translate([0,20,th])
+            bracket();  
+   
+            translate([0,sh_y-20,th])
+            bracket();
             
+            translate([0,sh_y-13,sh_z-20])
+            rear_bracket();
         }
     
         junk_in_the_box();
+        
+        // stress relief
+        translate([0,10,0])
+        rotate([-90,0,90])
+        stress_cutouts(sh_y-10);
+        
+        translate([0,10,sh_z])
+        rotate([-90,0,90])
+        stress_cutouts(sh_y-10);
     }
 }
 
@@ -355,27 +486,63 @@ module shell_right() {
                 cube([sh_x,sh_y,sh_z]);
             }
             
+            // guide edge for bottom
+            translate([sh_x-2,th+2,th])
+            cube([2,sh_y-4-thx2,2]);
+ 
+            // brackets
+            translate([sh_x,20,th])
+            scale([-1,1,1])
+            bracket();  
+   
+            translate([sh_x,sh_y-20,th])
+            scale([-1,1,1])
+            bracket();
+            
+            translate([sh_x,sh_y-13,sh_z-20])
+            scale([-1,1,1])
+            rear_bracket();
         }
     
         junk_in_the_box();
+        
+        // stress relief
+        translate([sh_x,10,0])
+        rotate([90,0,90])
+        stress_cutouts(sh_y-10);
+        
+        translate([sh_x,10,sh_z])
+        rotate([90,0,90])
+        stress_cutouts(sh_y-10);
     }
 }
 
-shell_bottom();
+module parts_to_print() {
+    shell_bottom();
 
-translate([0,sh_y+10,0])
-rotate([-90,0,0])
-translate([0,-sh_y,0])
-shell_back();
+    translate([0,sh_y+10,0])
+    rotate([-90,0,0])
+    translate([0,-sh_y,0])
+    shell_back();
 
-translate([-10,0,0])
-rotate([0,-90,0])
-translate([3,0,0])
-shell_left();
+    translate([-10,0,0])
+    rotate([0,-90,0])
+    translate([3,0,0])
+    shell_left();
 
-translate([sh_x+10,0,0])
-rotate([0,90,0])
-translate([-sh_x-3,0,0])
-shell_right();
+    translate([sh_x+10,0,0])
+    rotate([0,90,0])
+    translate([-sh_x-3,0,0])
+    shell_right();
+}
 
-//junk_in_the_box();
+parts_to_print();
+
+//shell_bottom();
+
+//translate([sh_z,0,0])
+//rotate([0,-90,0])
+//translate([3,0,0])
+//shell_left();
+
+junk_in_the_box();
