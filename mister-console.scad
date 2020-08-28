@@ -189,6 +189,24 @@ module screw_hole() {
     cylinder(h=20,r=thread_inset,center=false);
 }
 
+module nine_pin() {
+    union() {
+        cube([31,40.5,15]);
+    
+        // todo: shape this more precisely, rounded/tapered...
+        translate([(31-18)/2,-6,(15-9.3)/2])
+        cube([18,6,9.3]);
+        
+        translate([2.9,-5,7.5])
+        rotate([-90,0,0])
+        cylinder(h=5,r=2.7,center=false);
+
+        translate([31-2.9,-5,7.5])
+        rotate([-90,0,0])
+        cylinder(h=5,r=2.7,center=false);
+    }
+}
+
 module junk_in_the_box() {
     translate([12,sh_y-18,sh_z-psw_z-6])
     switch();
@@ -220,6 +238,13 @@ module junk_in_the_box() {
     translate([sh_x+3,40,5])
     scale([-1,1,1])
     side_vent();
+    
+    // 9pin ports
+    translate([70-3,-10.3,8])
+    nine_pin();
+    
+    translate([sh_x-70-25-3,-10.3,8])
+    nine_pin();
     
     // bottom assembly screw holes
     translate([6,20,-5])
@@ -517,6 +542,86 @@ module shell_right() {
     }
 }
 
+module mister_logo() {
+    import(file = "logo.svg", center = false, dpi = 96);
+}
+
+module shell_front() {
+    th=3;
+    thx2=th*2;
+    
+    difference() {
+        union() {
+            translate([-3,-16,0])
+            cube([sh_x+6,19,sh_z+3]);
+            
+            difference() {
+                translate([-3,0,20])
+                cube([sh_x+6,45,30+3]); 
+                
+                translate([0,3,20])
+                rotate([35,0,0])
+                translate([0,0,-50])
+                cube([sh_x+6,65,50]);
+            }
+                        
+            // brackets
+            translate([40,3,3])
+            rotate([0,0,90])
+            bracket();  
+
+            translate([sh_x-40,3,3])
+            rotate([0,0,90])
+            bracket();  
+        }
+    
+        junk_in_the_box();
+
+        // cut-outs for side panels
+        translate([-3,0,0])
+        cube([3,sh_y,sh_z]);
+
+        translate([sh_x,0,0])
+        cube([3,sh_y,sh_z]);
+
+        // outer shaping
+        translate([30,-20,5])
+        difference() {
+            translate([0,0,20])
+            cube([140,45,30+3]); 
+            
+            translate([0,3,20])
+            rotate([35,0,0])
+            translate([0,0,-50])
+            cube([140,65,50]);
+        }
+        
+        // left front edge
+        translate([-3,-16,0])
+        rotate([0,0,45])
+        translate([-10,-10,0])
+        cube([20,20,sh_z+3]);
+        
+        // right front edge
+        translate([sh_x+3,-16,0])
+        rotate([0,0,45])
+        translate([-10,-10,0])
+        cube([20,20,sh_z+3]);
+
+        // bottom front edge
+        translate([0,-22,0])
+        rotate([45,0,0])
+        translate([-3,-10,-10])
+        cube([sh_x+6,20,20]);
+        
+        // top front edge
+        translate([0,-22,sh_z+15])
+        rotate([35,0,0])
+        translate([-3,-20,-20])
+        cube([sh_x+6,40,40]);
+    }
+}
+
 module parts_to_print() {
     shell_bottom();
 
@@ -534,9 +639,16 @@ module parts_to_print() {
     rotate([0,90,0])
     translate([-sh_x-3,0,0])
     shell_right();
+    
+    shell_front();
 }
 
-parts_to_print();
+// render this to visualize the entire set of parts.
+//parts_to_print();
+
+// render this to visualize the parts removed from
+// the panels...
+//junk_in_the_box();
 
 //shell_bottom();
 
@@ -545,4 +657,14 @@ parts_to_print();
 //translate([3,0,0])
 //shell_left();
 
-junk_in_the_box();
+//rotate([0,90,0])
+//translate([-sh_x-3,0,0])
+//shell_right();
+
+shell_front();
+
+translate([35,-15,25])
+rotate([35,0,0])
+scale([0.7,0.7,1])
+linear_extrude(height = 3)
+mister_logo();
