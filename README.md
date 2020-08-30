@@ -34,3 +34,5 @@ switches are momentary, connecting the DE10 nano GPIO pin to GND when pressed.
 * `reset` : GPIO1 pin 17
 * `OSD`   : GPIO1 pin 13
 * `user`  : GPIO1 pin 15
+
+LOGO for Mister 
