@@ -193,14 +193,31 @@ module nine_pin() {
         translate([(31-18)/2,-6,(15-9.3)/2])
         cube([18,6,9.3]);
         
+        translate([-1.5,0,-3])
+        cube([34,14.5,6]);
+
+        translate([-1.5,3,-5])
+        cube([34,11.5,6]);
+        
         translate([2.9,-5,7.5])
         rotate([-90,0,0])
-        cylinder(h=5,r=2.7,center=false);
+        cylinder(h=5,r=2.8,center=false);
 
         translate([31-2.9,-5,7.5])
         rotate([-90,0,0])
-        cylinder(h=5,r=2.7,center=false);
+        cylinder(h=5,r=2.8,center=false);
     }
+}
+
+module push_button() {
+    rotate([-90,0,0])
+    cylinder(h=22,r=4,center=false);
+    
+    translate([-7,12.5,-8])
+    cube([14,60,16]);
+    
+    translate([-6,0,-5.25])
+    cube([12,10.5,10.5]);
 }
 
 module junk_in_the_box() {
@@ -291,6 +308,13 @@ module junk_in_the_box() {
     // led block cutout
     translate([sh_x-27,-14,sh_z-37])
     cube([14,60,30]);
+    
+    // push buttons
+    translate([21,-16,37])
+    push_button();
+    
+    translate([21,-16,25])
+    push_button();
 }
 
 module mister_standoff() {
@@ -666,9 +690,9 @@ module shell_front_part2() {
         translate([25,0,0])
         cube([10,3,5]);
 
-        translate([25,20,31])
+        translate([28,20,31])
         rotate([35,0,0])
-        cube([10,5,3]);
+        cube([7,5,3]);
     }
 }
 
@@ -723,7 +747,7 @@ module parts_to_print() {
 }
 
 // render this to visualize the entire set of parts.
-parts_to_print();
+//parts_to_print();
 
 // render this to visualize the parts removed from
 // the panels...
@@ -744,15 +768,14 @@ parts_to_print();
 //translate([0,-sh_y,0])
 //shell_back();
 
-translate([0,-10,10])
-rotate([-35,0,0])
-shell_front_part1();
+//translate([0,-10,10])
+//rotate([-35,0,0])
+//shell_front_part1();
 
 translate([-10,-10,10])
 rotate([-35,0,0])
 shell_front_part2();
 
-translate([10,-10,10])
-rotate([-35,0,0])
-shell_front_part3();
-
+//translate([10,-10,10])
+//rotate([-35,0,0])
+//shell_front_part3();
