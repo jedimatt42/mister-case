@@ -1,12 +1,15 @@
 
 module button_cap() {
+    x=11;
+    z=9.5;
+    
     difference() {
-        cube([12,7,10.5]);
+        cube([x,7,z]);
         
         translate([1,2.5,1])
-        cube([10,5.5,8.5]);
+        cube([x-2,5.5,z-2]);
         
-        translate([6,1.5,5.25])
+        translate([x/2,1.5,z/2])
         rotate([-90,0,0])
         cylinder(h=2,r=3.25,$fn=20);
     }

@@ -506,12 +506,8 @@ module shell_left() {
     
     difference() {
         union() {
-            difference() {
-                translate([-th,0,0])
-                cube([th,sh_y,sh_z]);
-                
-                cube([sh_x,sh_y,sh_z]);
-            }
+            translate([-th,0,0])
+            cube([th,sh_y,sh_z]);
 
             // guide edge for bottom
             translate([0,th+2,th])
@@ -547,13 +543,9 @@ module shell_right() {
     
     difference() {
         union() {
-            difference() {
-                translate([sh_x,0,0])
-                cube([th,sh_y,sh_z]);
-                
-                cube([sh_x,sh_y,sh_z]);
-            }
-            
+            translate([sh_x,0,0])
+            cube([th,sh_y,sh_z]);
+                            
             // guide edge for bottom
             translate([sh_x-2,th+2,th])
             cube([2,sh_y-4-thx2,2]);
@@ -724,6 +716,78 @@ module shell_front_part1() {
     }
 }
 
+module top_cover() {
+    difference() {
+        translate([-3,45,sh_z])
+        union() {
+            cube([206,sh_y-45,3]);
+            
+            // left mount tab
+            translate([40,0,-10])
+            cube([9,3,10]);
+            
+            translate([46,0,-10])
+            cube([3,6,10]);
+            
+            // right mount tab
+            translate([sh_x-43,0,-10])
+            cube([9,3,10]);
+            
+            translate([sh_x-43,0,-10])
+            cube([3,6,10]);
+            
+            // rear screw bracket
+            translate([(sh_x/2),sh_y-45-19,-10])
+            cube([6,16,10]);
+            
+            // fit guides
+            //  - left
+            translate([3,0,-2])
+            cube([2,sh_y-48,2]);
+            //  - right
+            translate([sh_x+3-2,0,-2])
+            cube([2,sh_y-48,2]);
+            //  - rear
+            translate([3,sh_y-45-5,-2])
+            cube([sh_x,2,2]);
+            //  - front
+            translate([3,0,-2])
+            cube([sh_x,2,2]);
+            // ribbing
+            translate([3,50,-2])
+            cube([sh_x,2,2]);
+            translate([3,100,-2])
+            cube([sh_x,2,2]);
+        }
+        
+        junk_in_the_box();
+    }
+}
+
+module top_cover_left() {
+    difference() {
+        top_cover();
+        
+        translate([sh_x/2,0,25])
+        cube([sh_x/2+10,sh_y,50]);
+    }
+    
+    translate([sh_x/2-5,47,sh_z-2])
+    cube([10,20,2]);
+}
+
+module top_cover_right() {
+    difference() {
+        top_cover();
+        
+        translate([-10,0,25])
+        cube([sh_x/2+10,sh_y,50]);
+    }
+
+    translate([sh_x/2-5,135,sh_z-2])
+    cube([10,10,2]);
+}
+
 module parts_to_print() {
     shell_bottom();
 
@@ -742,8 +806,11 @@ module parts_to_print() {
     translate([-sh_x-3,0,0])
     shell_right();
     
-    //translate([0,-50,0])
-    //shell_front();
+    translate([0,0,0])
+    shell_front();
+    
+    translate([0,0,10])
+    top_cover();
 }
 
 // render this to visualize the entire set of parts.
@@ -772,10 +839,20 @@ module parts_to_print() {
 //rotate([-35,0,0])
 //shell_front_part1();
 
-translate([-10,-10,10])
-rotate([-35,0,0])
-shell_front_part2();
+//translate([-10,-10,10])
+//rotate([-35,0,0])
+//shell_front_part2();
 
 //translate([10,-10,10])
 //rotate([-35,0,0])
 //shell_front_part3();
+
+//translate([3,sh_y-45,0])
+//rotate([180,0,0])
+//translate([0,-45,-sh_z-3])
+//top_cover_left();
+
+translate([5-sh_x/2,sh_y-45,0])
+rotate([180,0,0])
+translate([0,-45,-sh_z-3])
+top_cover_right();
