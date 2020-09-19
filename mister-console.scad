@@ -788,6 +788,73 @@ module top_cover_right() {
     cube([10,10,2]);
 }
 
+module top_seam_cover_middle() {
+    difference() {
+        union() {
+            cube([20,sh_y-45,1]);
+        
+            translate([3,0,0])
+            cube([4,sh_y-45,2]);
+        
+            translate([13,0,0])
+            cube([4,sh_y-45,2]);
+        }
+        
+        // rounded edge on back
+        translate([0,sh_y-45-2,0])
+        difference() {
+            cube([20,4,4]);
+            
+            rotate([0,90,0])
+            cylinder(h=20,r=2,$fn=20);
+        }
+        
+        translate([0,-10,0])
+        rotate([0,0,45])
+        cube(14.14);
+        
+        translate([20,-10,0])
+        rotate([0,0,45])
+        cube(14.14);        
+    }
+}
+
+module top_seam_cover_right() {
+    hx=206/2;
+    
+    difference() {
+        union() {
+            cube([hx,20,1]);
+        
+            translate([0,3,0])
+            cube([hx,4,2]);
+        
+            translate([0,13,0])
+            cube([hx,4,2]);
+        }
+        
+        // rounded edge on back
+        translate([hx-2,0,0])
+        difference() {
+            cube([4,20,4]);
+            
+            rotate([-90,0,0])
+            cylinder(h=20,r=2,$fn=20);
+        }
+        
+        translate([0,10,0])
+        rotate([0,0,45])
+        cube(14.14);   
+    }
+}
+
+module top_seam_cover_left() {
+    hx=206/2;
+    translate([hx,0,0])
+    scale([-1,1,1])
+    top_seam_cover_right();
+}
+
 module parts_to_print() {
     shell_bottom();
 
@@ -819,6 +886,9 @@ module parts_to_print() {
 // render this to visualize the parts removed from
 // the panels...
 //junk_in_the_box();
+
+// ** Uncomment each of these to product stl for 
+// ** individual pieces.
 
 //shell_bottom();
 
@@ -852,7 +922,13 @@ module parts_to_print() {
 //translate([0,-45,-sh_z-3])
 //top_cover_left();
 
-translate([5-sh_x/2,sh_y-45,0])
-rotate([180,0,0])
-translate([0,-45,-sh_z-3])
-top_cover_right();
+//translate([5-sh_x/2,sh_y-45,0])
+//rotate([180,0,0])
+//translate([0,-45,-sh_z-3])
+//top_cover_right();
+
+//top_seam_cover_middle();
+
+//top_seam_cover_right();
+
+//top_seam_cover_left();
